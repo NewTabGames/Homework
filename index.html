@@ -33,6 +33,24 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
+/* CLOCK */
+.clock {
+    text-align: center;
+    margin-top: 6px;
+    margin-bottom: 15px;
+}
+
+#time {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #333;
+}
+
+#date {
+    font-size: 0.9rem;
+    color: #666;
+}
+
 .input-container {
     display: flex;
     gap: 10px;
@@ -151,7 +169,13 @@ button {
 <body>
 
 <div class="container">
-    <div class="header"><h1>Homework</h1></div>
+    <div class="header">
+        <h1>Homework</h1>
+        <div class="clock">
+            <div id="time"></div>
+            <div id="date"></div>
+        </div>
+    </div>
 
     <div class="input-container">
         <input class="task-input" placeholder="What needs to be done?">
@@ -180,6 +204,31 @@ button {
 </div>
 
 <script>
+/* CLOCK */
+const timeEl = document.getElementById('time');
+const dateEl = document.getElementById('date');
+
+function updateClock() {
+    const now = new Date();
+
+    timeEl.textContent = now.toLocaleTimeString([], {
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+
+    dateEl.textContent = now.toLocaleDateString([], {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+
+/* TASK APP */
 const input = document.querySelector('.task-input');
 const addBtn = document.querySelector('.add-btn');
 const list = document.querySelector('.task-list');
