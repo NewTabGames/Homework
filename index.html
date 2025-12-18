@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homework</title>
+
+<style>
+/* ================= THEME VARIABLES ================= */
+:root {
+    --bg: linear-gradient(135deg, #667eea, #764ba2);
+    --card: #ffffff;
+    --accent: #667eea;
+    --accent2: #764ba2;
+    --text: #333;
+    --task-bg: #f7f7f7;
+}
+
+/* ================= BASE ================= */
+* {
+    box-sizing: border-box;
+    font-family: Segoe UI, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 30px;
+    width: 100%;
+    max-width: 600px;
+    color: var(--text);
+}
+
+.header h1 {
+    text-align: center;
+    font-size: 2.4rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.input-container {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.task-input {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    border: 2px solid #ddd;
+}
+
+.add-btn {
+    padding: 14px 22px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    cursor: pointer;
+}
+
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+}
+
+.task-item {
+    background: var(--task-bg);
+    padding: 14px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.task-text.completed {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.task-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+button {
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+/* ================= MODAL ================= */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    background: var(--card);
+    padding: 25px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 400px;
+}
+
+.modal input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    margin-bottom: 15px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.save-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+}
+
+.cancel-btn {
+    background: #eee;
+    padding: 10px 18px;
+    border-radius: 10px;
+}
+
+/* ================= THEMES ================= */
+.theme-purple {
+    --bg: linear-gradient(135deg, #667eea, #764ba2);
+    --accent: #667eea;
+    --accent2: #764ba2;
+}
+
+.theme-dark {
+    --bg: #121212;
+    --card: #1e1e1e;
+    --task-bg: #2a2a2a;
+    --text: #eee;
+    --accent: #bb86fc;
+    --accent2: #3700b3;
+}
+
+.theme-ocean {
+    --bg: linear-gradient(135deg, #2193b0, #6dd5ed);
+    --accent: #2193b0;
+    --accent2: #6dd5ed;
+}
+
+.theme-sunset {
+    --bg: linear-gradient(135deg, #ff512f, #dd2476);
+    --accent: #ff512f;
+    --accent2: #dd2476;
+}
+
+.theme-mint {
+    --bg: linear-gradient(135deg, #43cea2, #185a9d);
+    --accent: #43cea2;
+    --accent2: #185a9d;
+}
+
+.theme-red {
+    --bg: linear-gradient(135deg, #8e0e00, #1f1c18);
+    --accent: #c31432;
+    --accent2: #240b36;
+}
+
+/* ================= THEME BUTTONS ================= */
+.theme-switcher {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 25px;
+}
+
+.theme-switcher button {
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: #eee;
+}
+</style>
+</head>
+
+<body class="theme-purple">
+
+<div class="container">
+    <div class="header"><h1>Homework</h1></div>
+
+    <div class="input-container">
+        <input class="task-input" placeholder="What needs to be done?">
+        <button class="add-btn">Add</button>
+    </div>
+
+    <div class="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="active">Active</button>
+        <button class="filter-btn" data-filter="completed">Completed</button>
+    </div>
+
+    <ul class="task-list"></ul>
+
+    <!-- THEME SWITCHER -->
+    <div class="theme-switcher">
+        <button onclick="setTheme('theme-purple')">Purple</button>
+        <button onclick="setTheme('theme-dark')">Dark</button>
+        <button onclick="setTheme('theme-ocean')">Ocean</button>
+        <button onclick="setTheme('theme-sunset')">Sunset</button>
+        <button onclick="setTheme('theme-mint')">Mint</button>
+        <button onclick="setTheme('theme-red')">Red</button>
+    </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay">
+    <div class="modal">
+        <h2>Edit Task</h2>
+        <input id="editInput">
+        <div class="modal-actions">
+            <button class="cancel-btn">Cancel</button>
+            <button class="save-btn">Save</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ========= THEME ========= */
+function setTheme(theme) {
+    document.body.className = theme;
+    localStorage.setItem('theme', theme);
+}
+document.body.className = localStorage.getItem('theme') || 'theme-purple';
+
+/* ========= TASK APP (UNCHANGED) ========= */
+const input = document.querySelector('.task-input');
+const addBtn = document.querySelector('.add-btn');
+const list = document.querySelector('.task-list');
+const filters = document.querySelectorAll('.filter-btn');
+
+const modal = document.querySelector('.modal-overlay');
+const editInput = document.getElementById('editInput');
+const saveBtn = document.querySelector('.save-btn');
+const cancelBtn = document.querySelector('.cancel-btn');
+
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+let currentFilter = 'all';
+let editingId = null;
+
+addBtn.onclick = addTask;
+input.onkeydown = e => e.key === 'Enter' && addTask();
+
+filters.forEach(btn => btn.onclick = () => {
+    filters.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    render();
+});
+
+saveBtn.onclick = saveEdit;
+cancelBtn.onclick = closeModal;
+modal.onclick = e => e.target === modal && closeModal();
+
+function addTask() {
+    if (!input.value.trim()) return;
+    tasks.unshift({ id: Date.now(), text: input.value, completed: false });
+    input.value = '';
+    save();
+}
+
+function openEdit(id) {
+    editingId = id;
+    editInput.value = tasks.find(t => t.id === id).text;
+    modal.style.display = 'flex';
+}
+
+function saveEdit() {
+    const task = tasks.find(t => t.id === editingId);
+    if (task && editInput.value.trim()) {
+        task.text = editInput.value.trim();
+        save();
+    }
+    closeModal();
+}
+
+function closeModal() {
+    modal.style.display = 'none';
+    editingId = null;
+}
+
+function toggleTask(id) {
+    const t = tasks.find(t => t.id === id);
+    t.completed = !t.completed;
+    save();
+}
+
+function deleteTask(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    save();
+}
+
+function render() {
+    let filtered = tasks;
+    if (currentFilter === 'active') filtered = tasks.filter(t => !t.completed);
+    if (currentFilter === 'completed') filtered = tasks.filter(t => t.completed);
+
+    list.innerHTML = filtered.map(t => `
+        <li class="task-item">
+            <input type="checkbox" ${t.completed ? 'checked' : ''} data-id="${t.id}">
+            <span class="task-text ${t.completed ? 'completed' : ''}">${t.text}</span>
+            <div class="task-actions">
+                <button onclick="openEdit(${t.id})">✏️</button>
+                <button onclick="deleteTask(${t.id})">🗑️</button>
+            </div>
+        </li>
+    `).join('');
+
+    document.querySelectorAll('.task-item input').forEach(cb =>
+        cb.onchange = e => toggleTask(+e.target.dataset.id)
+    );
+}
+
+function save() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    render();
+}
+
+render();
+</script>
+
+</body>
+</html>
