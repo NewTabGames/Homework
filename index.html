@@ -6,25 +6,11 @@
 <title>Homework</title>
 
 <style>
-/* ================= THEME VARIABLES ================= */
-:root {
-    --bg: linear-gradient(135deg, #667eea, #764ba2);
-    --card: #ffffff;
-    --accent: #667eea;
-    --accent2: #764ba2;
-    --text: #333;
-    --task-bg: #f7f7f7;
-}
-
-/* ================= BASE ================= */
-* {
-    box-sizing: border-box;
-    font-family: Segoe UI, sans-serif;
-}
+* { box-sizing: border-box; font-family: Segoe UI, sans-serif; }
 
 body {
     margin: 0;
-    background: var(--bg);
+    background: linear-gradient(135deg, #667eea, #764ba2);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -32,18 +18,17 @@ body {
 }
 
 .container {
-    background: var(--card);
+    background: white;
     border-radius: 20px;
     padding: 30px;
     width: 100%;
     max-width: 600px;
-    color: var(--text);
 }
 
 .header h1 {
     text-align: center;
     font-size: 2.4rem;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    background: linear-gradient(135deg, #667eea, #764ba2);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -65,7 +50,7 @@ body {
     padding: 14px 22px;
     border: none;
     border-radius: 12px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
     cursor: pointer;
 }
@@ -84,12 +69,12 @@ body {
 }
 
 .filter-btn.active {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
 }
 
 .task-item {
-    background: var(--task-bg);
+    background: #f7f7f7;
     padding: 14px;
     border-radius: 12px;
     display: flex;
@@ -100,7 +85,7 @@ body {
 
 .task-text.completed {
     text-decoration: line-through;
-    opacity: 0.6;
+    color: #999;
 }
 
 .task-actions {
@@ -115,7 +100,7 @@ button {
     border: none;
 }
 
-/* ================= MODAL ================= */
+/* MODAL */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -127,7 +112,7 @@ button {
 }
 
 .modal {
-    background: var(--card);
+    background: white;
     padding: 25px;
     border-radius: 16px;
     width: 90%;
@@ -149,7 +134,7 @@ button {
 }
 
 .save-btn {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
     padding: 10px 18px;
     border-radius: 10px;
@@ -160,64 +145,10 @@ button {
     padding: 10px 18px;
     border-radius: 10px;
 }
-
-/* ================= THEMES ================= */
-.theme-purple {
-    --bg: linear-gradient(135deg, #667eea, #764ba2);
-    --accent: #667eea;
-    --accent2: #764ba2;
-}
-
-.theme-dark {
-    --bg: #121212;
-    --card: #1e1e1e;
-    --task-bg: #2a2a2a;
-    --text: #eee;
-    --accent: #bb86fc;
-    --accent2: #3700b3;
-}
-
-.theme-ocean {
-    --bg: linear-gradient(135deg, #2193b0, #6dd5ed);
-    --accent: #2193b0;
-    --accent2: #6dd5ed;
-}
-
-.theme-sunset {
-    --bg: linear-gradient(135deg, #ff512f, #dd2476);
-    --accent: #ff512f;
-    --accent2: #dd2476;
-}
-
-.theme-mint {
-    --bg: linear-gradient(135deg, #43cea2, #185a9d);
-    --accent: #43cea2;
-    --accent2: #185a9d;
-}
-
-.theme-red {
-    --bg: linear-gradient(135deg, #8e0e00, #1f1c18);
-    --accent: #c31432;
-    --accent2: #240b36;
-}
-
-/* ================= THEME BUTTONS ================= */
-.theme-switcher {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 25px;
-}
-
-.theme-switcher button {
-    padding: 8px 12px;
-    border-radius: 12px;
-    background: #eee;
-}
 </style>
 </head>
 
-<body class="theme-purple">
+<body>
 
 <div class="container">
     <div class="header"><h1>Homework</h1></div>
@@ -234,19 +165,9 @@ button {
     </div>
 
     <ul class="task-list"></ul>
-
-    <!-- THEME SWITCHER -->
-    <div class="theme-switcher">
-        <button onclick="setTheme('theme-purple')">Purple</button>
-        <button onclick="setTheme('theme-dark')">Dark</button>
-        <button onclick="setTheme('theme-ocean')">Ocean</button>
-        <button onclick="setTheme('theme-sunset')">Sunset</button>
-        <button onclick="setTheme('theme-mint')">Mint</button>
-        <button onclick="setTheme('theme-red')">Red</button>
-    </div>
 </div>
 
-<!-- MODAL -->
+<!-- EDIT MODAL -->
 <div class="modal-overlay">
     <div class="modal">
         <h2>Edit Task</h2>
@@ -259,14 +180,6 @@ button {
 </div>
 
 <script>
-/* ========= THEME ========= */
-function setTheme(theme) {
-    document.body.className = theme;
-    localStorage.setItem('theme', theme);
-}
-document.body.className = localStorage.getItem('theme') || 'theme-purple';
-
-/* ========= TASK APP (UNCHANGED) ========= */
 const input = document.querySelector('.task-input');
 const addBtn = document.querySelector('.add-btn');
 const list = document.querySelector('.task-list');
@@ -281,14 +194,16 @@ let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 let currentFilter = 'all';
 let editingId = null;
 
-addBtn.onclick = addTask;
-input.onkeydown = e => e.key === 'Enter' && addTask();
+addBtn.addEventListener('click', addTask);
+input.addEventListener('keydown', e => e.key === 'Enter' && addTask());
 
-filters.forEach(btn => btn.onclick = () => {
-    filters.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = btn.dataset.filter;
-    render();
+filters.forEach(btn => {
+    btn.addEventListener('click', () => {
+        filters.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        render();
+    });
 });
 
 saveBtn.onclick = saveEdit;
@@ -296,8 +211,10 @@ cancelBtn.onclick = closeModal;
 modal.onclick = e => e.target === modal && closeModal();
 
 function addTask() {
-    if (!input.value.trim()) return;
-    tasks.unshift({ id: Date.now(), text: input.value, completed: false });
+    const text = input.value.trim();
+    if (!text) return;
+
+    tasks.unshift({ id: Date.now(), text, completed: false });
     input.value = '';
     save();
 }
@@ -306,6 +223,7 @@ function openEdit(id) {
     editingId = id;
     editInput.value = tasks.find(t => t.id === id).text;
     modal.style.display = 'flex';
+    editInput.focus();
 }
 
 function saveEdit() {
@@ -323,8 +241,8 @@ function closeModal() {
 }
 
 function toggleTask(id) {
-    const t = tasks.find(t => t.id === id);
-    t.completed = !t.completed;
+    const task = tasks.find(t => t.id === id);
+    task.completed = !task.completed;
     save();
 }
 
@@ -343,15 +261,22 @@ function render() {
             <input type="checkbox" ${t.completed ? 'checked' : ''} data-id="${t.id}">
             <span class="task-text ${t.completed ? 'completed' : ''}">${t.text}</span>
             <div class="task-actions">
-                <button onclick="openEdit(${t.id})">✏️</button>
-                <button onclick="deleteTask(${t.id})">🗑️</button>
+                <button class="edit-btn" data-id="${t.id}">✏️</button>
+                <button class="delete-btn" data-id="${t.id}">🗑️</button>
             </div>
         </li>
     `).join('');
 
-    document.querySelectorAll('.task-item input').forEach(cb =>
-        cb.onchange = e => toggleTask(+e.target.dataset.id)
-    );
+    document.querySelectorAll('.task-item').forEach(item => {
+        item.querySelector('input').onchange = e =>
+            toggleTask(+e.target.dataset.id);
+
+        item.querySelector('.edit-btn').onclick = e =>
+            openEdit(+e.target.dataset.id);
+
+        item.querySelector('.delete-btn').onclick = e =>
+            deleteTask(+e.target.dataset.id);
+    });
 }
 
 function save() {
