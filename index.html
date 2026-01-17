@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homework</title>
+
+<style>
+
+/* SIDEBAR */
+.sidebar {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    padding: 20px;
+    border-radius: 16px 0 0 16px;
+    box-shadow: -2px 2px 10px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    font-family: Segoe UI, sans-serif;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0;
+    right: 0; bottom: 0;
+    background-color: #ccc;
+    border-radius: 28px;
+    transition: .3s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px; width: 20px;
+    left: 4px; bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: .3s;
+}
+
+input:checked + .slider {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+.toggle-label {
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+* { box-sizing: border-box; font-family: Segoe UI, sans-serif; }
+
+body {
+    margin: 0;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.header h1 {
+    text-align: center;
+    font-size: 2.4rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* CLOCK */
+.clock {
+    text-align: center;
+    margin-top: 6px;
+    margin-bottom: 15px;
+}
+
+#time {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #333;
+}
+
+#date {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.input-container {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.task-input,
+.due-input {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    border: 2px solid #ddd;
+}
+
+.add-btn {
+    padding: 14px 22px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    cursor: pointer;
+}
+
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.task-item {
+    background: #f7f7f7;
+    padding: 14px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.task-text.completed {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.due-time {
+    font-size: 0.8rem;
+    color: #555;
+}
+
+.task-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+button {
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+/* MODAL */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 400px;
+}
+
+.modal input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    margin-bottom: 15px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.save-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+}
+
+.cancel-btn {
+    background: #eee;
+    padding: 10px 18px;
+    border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Homework</h1>
+        <div class="clock">
+            <div id="time"></div>
+            <div id="date"></div>
+        </div>
+    </div>
+	
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h3>Settings</h3>
+    <label class="switch">
+        <input type="checkbox" id="cpuToggle">
+        <span class="slider"></span>
+    </label>
+    <span class="toggle-label">Reduce CPU Usage</span>
+</div>
+
+    <div class="input-container">
+        <input class="task-input" placeholder="What needs to be done?">
+        <input type="datetime-local" class="due-input">
+        <button class="add-btn">Add</button>
+    </div>
+
+    <div class="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="active">Active</button>
+        <button class="filter-btn" data-filter="completed">Completed</button>
+    </div>
+
+    <ul class="task-list"></ul>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay">
+    <div class="modal">
+        <h2>Edit Task</h2>
+        <input id="editInput">
+        <div class="modal-actions">
+            <button class="cancel-btn">Cancel</button>
+            <button class="save-btn">Save</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* CLOCK */
+const timeEl = document.getElementById('time');
+const dateEl = document.getElementById('date');
+
+function updateClock() {
+    const now = new Date();
+
+    timeEl.textContent = now.toLocaleTimeString([], {
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+
+    dateEl.textContent = now.toLocaleDateString([], {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+
+/* TASK APP */
+const input = document.querySelector('.task-input');
+const dueInput = document.querySelector('.due-input');
+const addBtn = document.querySelector('.add-btn');
+const list = document.querySelector('.task-list');
+const filters = document.querySelectorAll('.filter-btn');
+
+const modal = document.querySelector('.modal-overlay');
+const editInput = document.getElementById('editInput');
+const saveBtn = document.querySelector('.save-btn');
+const cancelBtn = document.querySelector('.cancel-btn');
+
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+let currentFilter = 'all';
+let editingId = null;
+
+addBtn.addEventListener('click', addTask);
+input.addEventListener('keydown', e => e.key === 'Enter' && addTask());
+
+filters.forEach(btn => {
+    btn.addEventListener('click', () => {
+        filters.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        render();
+    });
+});
+
+saveBtn.onclick = saveEdit;
+cancelBtn.onclick = closeModal;
+modal.onclick = e => e.target === modal && closeModal();
+
+function addTask() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    tasks.unshift({
+        id: Date.now(),
+        text,
+        completed: false,
+        due: dueInput.value || null
+    });
+
+    input.value = '';
+    dueInput.value = '';
+    save();
+}
+
+function openEdit(id) {
+    editingId = id;
+    editInput.value = tasks.find(t => t.id === id).text;
+    modal.style.display = 'flex';
+    editInput.focus();
+}
+
+function saveEdit() {
+    const task = tasks.find(t => t.id === editingId);
+    if (task && editInput.value.trim()) {
+        task.text = editInput.value.trim();
+        save();
+    }
+    closeModal();
+}
+
+function closeModal() {
+    modal.style.display = 'none';
+    editingId = null;
+}
+
+function toggleTask(id) {
+    const task = tasks.find(t => t.id === id);
+    task.completed = !task.completed;
+    save();
+}
+
+function deleteTask(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    save();
+}
+
+function getTimeRemaining(due) {
+    if (!due) return '';
+
+    const diff = new Date(due) - new Date();
+    if (diff <= 0) return '⏰ Past due date';
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    return `⏳ ${hours}h ${minutes}m ${seconds}s`;
+}
+
+function render() {
+    let filtered = tasks;
+    if (currentFilter === 'active') filtered = tasks.filter(t => !t.completed);
+    if (currentFilter === 'completed') filtered = tasks.filter(t => t.completed);
+
+    list.innerHTML = filtered.map(t => `
+        <li class="task-item">
+            <input type="checkbox" ${t.completed ? 'checked' : ''} data-id="${t.id}">
+            <div>
+                <span class="task-text ${t.completed ? 'completed' : ''}">${t.text}</span>
+                <div class="due-time">${getTimeRemaining(t.due)}</div>
+            </div>
+            <div class="task-actions">
+                <button class="edit-btn" data-id="${t.id}">✏️</button>
+                <button class="delete-btn" data-id="${t.id}">🗑️</button>
+            </div>
+        </li>
+    `).join('');
+
+    document.querySelectorAll('.task-item').forEach(item => {
+        item.querySelector('input').onchange = e =>
+            toggleTask(+e.target.dataset.id);
+
+        item.querySelector('.edit-btn').onclick = e =>
+            openEdit(+e.target.dataset.id);
+
+        item.querySelector('.delete-btn').onclick = e =>
+            deleteTask(+e.target.dataset.id);
+    });
+}
+
+function save() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    render();
+}
+
+render();
+const cpuToggle = document.getElementById('cpuToggle');
+
+// Load saved toggle state from localStorage
+let savedToggle = localStorage.getItem('cpuToggle') === 'true';
+cpuToggle.checked = savedToggle;
+
+// Set initial render interval based on toggle state
+let renderInterval = cpuToggle.checked ? 5000 : 1000;
+let renderTimer = setInterval(render, renderInterval);
+
+// Listen for toggle changes
+cpuToggle.addEventListener('change', () => {
+    clearInterval(renderTimer); // stop previous interval
+
+    // Update interval based on toggle
+    renderInterval = cpuToggle.checked ? 5000 : 1000;
+    renderTimer = setInterval(render, renderInterval);
+
+    // Save toggle state in localStorage
+    localStorage.setItem('cpuToggle', cpuToggle.checked);
+});
+</script>
+</body>
+</html>
