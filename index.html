@@ -241,11 +241,18 @@
          <!-- SIDEBAR -->
          <div class="sidebar">
             <h3>Settings</h3>
+            <!-- CPU TOGGLE -->
             <label class="switch">
             <input type="checkbox" id="cpuToggle">
             <span class="slider"></span>
             </label>
             <span class="toggle-label">Reduce CPU Usage</span>
+            <!-- CLOSE CONFIRM TOGGLE -->
+            <label class="switch">
+            <input type="checkbox" id="closeConfirmToggle">
+            <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Confirm Before Closing</span>
          </div>
          <div class="input-container">
             <input class="task-input" placeholder="What needs to be done?">
@@ -281,29 +288,29 @@
          const timeEl = document.getElementById('time');
          const dateEl = document.getElementById('date');
          
-function updateClock() {
-    const now = new Date();
-
-    timeEl.textContent = now.toLocaleTimeString([], {
-        hour: 'numeric',
-        minute: '2-digit',
-        second: '2-digit'
-    });
-
-    dateEl.textContent = now.toLocaleDateString([], {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-
-    // update tab
-    updateTabTitle();
-}
-
-updateClock();
-setInterval(updateClock, 1000);
-
+         function updateClock() {
+         const now = new Date();
+         
+         timeEl.textContent = now.toLocaleTimeString([], {
+         hour: 'numeric',
+         minute: '2-digit',
+         second: '2-digit'
+         });
+         
+         dateEl.textContent = now.toLocaleDateString([], {
+         weekday: 'long',
+         year: 'numeric',
+         month: 'long',
+         day: 'numeric'
+         });
+         
+         // update tab
+         updateTabTitle();
+         }
+         
+         updateClock();
+         setInterval(updateClock, 1000);
+         
          
          /* TASK APP */
          const input = document.querySelector('.task-input');
@@ -337,16 +344,16 @@ setInterval(updateClock, 1000);
          cancelBtn.onclick = closeModal;
          modal.onclick = e => e.target === modal && closeModal();
          
-		 function updateTabTitle() {
-    const now = new Date();
-    const timeString = now.toLocaleTimeString([], {
-        hour: 'numeric',
-        minute: '2-digit',
-        second: '2-digit'
-    });
-    document.title = `Hmwk Tracker - ${timeString}`;
-}
-
+         function updateTabTitle() {
+         const now = new Date();
+         const timeString = now.toLocaleTimeString([], {
+         hour: 'numeric',
+         minute: '2-digit',
+         second: '2-digit'
+         });
+         document.title = `Hmwk Tracker - ${timeString}`;
+         }
+         
          function addTask() {
              const text = input.value.trim();
              if (!text) return;
@@ -478,6 +485,37 @@ setInterval(updateClock, 1000);
          
              // Save toggle state in localStorage
              localStorage.setItem('cpuToggle', cpuToggle.checked);
+         });
+         // ===== CONFIRM BEFORE CLOSE =====
+         const closeConfirmToggle = document.getElementById('closeConfirmToggle');
+         
+         // Load saved state
+         closeConfirmToggle.checked =
+         localStorage.getItem('closeConfirmToggle') === 'true';
+         
+         // Handler function
+         function confirmBeforeClose(e) {
+         e.preventDefault();
+         e.returnValue = '';
+         }
+         
+         // Enable on load if saved
+         if (closeConfirmToggle.checked) {
+         window.addEventListener('beforeunload', confirmBeforeClose);
+         }
+         
+         // Listen for toggle changes
+         closeConfirmToggle.addEventListener('change', () => {
+         if (closeConfirmToggle.checked) {
+         window.addEventListener('beforeunload', confirmBeforeClose);
+         } else {
+         window.removeEventListener('beforeunload', confirmBeforeClose);
+         }
+         
+         localStorage.setItem(
+         'closeConfirmToggle',
+         closeConfirmToggle.checked
+         );
          });
       </script>
    </body>
