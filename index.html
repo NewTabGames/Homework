@@ -281,29 +281,29 @@
          const timeEl = document.getElementById('time');
          const dateEl = document.getElementById('date');
          
-function updateClock() {
-    const now = new Date();
-
-    timeEl.textContent = now.toLocaleTimeString([], {
-        hour: 'numeric',
-        minute: '2-digit',
-        second: '2-digit'
-    });
-
-    dateEl.textContent = now.toLocaleDateString([], {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-
-    // update tab
-    updateTabTitle();
-}
-
-updateClock();
-setInterval(updateClock, 1000);
-
+         function updateClock() {
+         const now = new Date();
+         
+         timeEl.textContent = now.toLocaleTimeString([], {
+         hour: 'numeric',
+         minute: '2-digit',
+         second: '2-digit'
+         });
+         
+         dateEl.textContent = now.toLocaleDateString([], {
+         weekday: 'long',
+         year: 'numeric',
+         month: 'long',
+         day: 'numeric'
+         });
+         
+         // update tab
+         updateTabTitle();
+         }
+         
+         updateClock();
+         setInterval(updateClock, 1000);
+         
          
          /* TASK APP */
          const input = document.querySelector('.task-input');
@@ -337,16 +337,16 @@ setInterval(updateClock, 1000);
          cancelBtn.onclick = closeModal;
          modal.onclick = e => e.target === modal && closeModal();
          
-		 function updateTabTitle() {
-    const now = new Date();
-    const timeString = now.toLocaleTimeString([], {
-        hour: 'numeric',
-        minute: '2-digit',
-        second: '2-digit'
-    });
-    document.title = `Hmwk Tracker - ${timeString}`;
-}
-
+         function updateTabTitle() {
+         const now = new Date();
+         const timeString = now.toLocaleTimeString([], {
+         hour: 'numeric',
+         minute: '2-digit',
+         second: '2-digit'
+         });
+         document.title = `Hmwk Tracker - ${timeString}`;
+         }
+         
          function addTask() {
              const text = input.value.trim();
              if (!text) return;
@@ -479,6 +479,30 @@ setInterval(updateClock, 1000);
              // Save toggle state in localStorage
              localStorage.setItem('cpuToggle', cpuToggle.checked);
          });
+         // --- Live reload on GitHub updates ---
+         let lastVersion = null;
+         const checkInterval = 20000; // check every 20 seconds
+         
+         async function checkForUpdate() {
+         try {
+         const response = await fetch(window.location.href, { cache: "no-store" });
+         const text = await response.text();
+         
+         // Compare to last version
+         if (lastVersion && lastVersion !== text) {
+            console.log("Site updated, reloading...");
+            location.reload();
+         }
+         
+         lastVersion = text;
+         } catch (err) {
+         console.error("Failed to check for updates:", err);
+         }
+         }
+         
+         // Start polling
+         setInterval(checkForUpdate, checkInterval);
+         
       </script>
    </body>
 </html>
