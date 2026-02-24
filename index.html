@@ -1,546 +1,462 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Hmwk Tracker</title>
-      <style>
-         /* SIDEBAR */
-         .sidebar {
-         position: fixed;
-         right: 0;
-         top: 50%;
-         transform: translateY(-50%);
-         background: white;
-         padding: 20px;
-         border-radius: 16px 0 0 16px;
-         box-shadow: -2px 2px 10px rgba(0,0,0,0.2);
-         display: flex;
-         flex-direction: column;
-         align-items: center;
-         gap: 10px;
-         font-family: Segoe UI, sans-serif;
-         }
-         .switch {
-         position: relative;
-         display: inline-block;
-         width: 50px;
-         height: 28px;
-         }
-         .switch input {
-         opacity: 0;
-         width: 0;
-         height: 0;
-         }
-         .slider {
-         position: absolute;
-         cursor: pointer;
-         top: 0; left: 0;
-         right: 0; bottom: 0;
-         background-color: #ccc;
-         border-radius: 28px;
-         transition: .3s;
-         }
-         .slider:before {
-         position: absolute;
-         content: "";
-         height: 20px; width: 20px;
-         left: 4px; bottom: 4px;
-         background-color: white;
-         border-radius: 50%;
-         transition: .3s;
-         }
-         input:checked + .slider {
-         background: linear-gradient(135deg, #667eea, #764ba2);
-         }
-         input:checked + .slider:before {
-         transform: translateX(22px);
-         }
-         .toggle-label {
-         font-size: 0.9rem;
-         text-align: center;
-         }
-         * { box-sizing: border-box; font-family: Segoe UI, sans-serif; }
-         body {
-         margin: 0;
-         background: linear-gradient(135deg, #667eea, #764ba2);
-         min-height: 100vh;
-         display: flex;
-         justify-content: center;
-         align-items: center;
-         }
-         .container {
-         background: white;
-         border-radius: 20px;
-         padding: 30px;
-         width: 100%;
-         max-width: 600px;
-         }
-         .header h1 {
-         text-align: center;
-         font-size: 2.4rem;
-         background: linear-gradient(135deg, #667eea, #764ba2);
-         -webkit-background-clip: text;
-         -webkit-text-fill-color: transparent;
-         }
-         /* CLOCK */
-         .clock {
-         text-align: center;
-         margin-top: 6px;
-         margin-bottom: 15px;
-         }
-         #time {
-         font-size: 1.6rem;
-         font-weight: 600;
-         color: #333;
-         }
-         #date {
-         font-size: 0.9rem;
-         color: #666;
-         }
-         .input-container {
-         display: flex;
-         gap: 10px;
-         margin: 20px 0;
-         }
-         .task-input,
-         .due-input {
-         flex: 1;
-         padding: 14px;
-         border-radius: 12px;
-         border: 2px solid #ddd;
-         }
-         .add-btn {
-         padding: 14px 22px;
-         border: none;
-         border-radius: 12px;
-         background: linear-gradient(135deg, #667eea, #764ba2);
-         color: white;
-         cursor: pointer;
-         }
-         .filters {
-         display: flex;
-         justify-content: center;
-         gap: 10px;
-         }
-         .filter-btn {
-         padding: 8px 16px;
-         border-radius: 20px;
-         border: none;
-         cursor: pointer;
-         }
-         .filter-btn.active {
-         background: linear-gradient(135deg, #667eea, #764ba2);
-         color: white;
-         }
-         .task-list {
-         list-style: none;
-         padding: 0;
-         margin: 0;
-         }
-         .task-item {
-         background: #f7f7f7;
-         padding: 14px;
-         border-radius: 12px;
-         display: flex;
-         align-items: center;
-         gap: 10px;
-         margin-top: 10px;
-         }
-         .task-text.completed {
-         text-decoration: line-through;
-         color: #999;
-         }
-         .due-time {
-         font-size: 0.8rem;
-         color: #555;
-         }
-         .task-actions {
-         margin-left: auto;
-         display: flex;
-         gap: 8px;
-         }
-         button {
-         cursor: pointer;
-         background: none;
-         border: none;
-         }
-         /* MODAL */
-         .modal-overlay {
-         position: fixed;
-         inset: 0;
-         background: rgba(0,0,0,0.5);
-         backdrop-filter: blur(6px);
-         display: none;
-         justify-content: center;
-         align-items: center;
-         }
-         .modal {
-         background: white;
-         padding: 25px;
-         border-radius: 16px;
-         width: 90%;
-         max-width: 400px;
-         }
-         .modal input {
-         width: 100%;
-         padding: 12px;
-         border-radius: 10px;
-         border: 2px solid #ddd;
-         margin-bottom: 15px;
-         }
-         .modal-actions {
-         display: flex;
-         justify-content: flex-end;
-         gap: 10px;
-         }
-         .save-btn {
-         background: linear-gradient(135deg, #667eea, #764ba2);
-         color: white;
-         padding: 10px 18px;
-         border-radius: 10px;
-         }
-         .cancel-btn {
-         background: #eee;
-         padding: 10px 18px;
-         border-radius: 10px;
-         }
-         .suggestions-box {
-         margin-top: 20px;
-         padding: 15px 20px;
-         border-radius: 12px;
-         background: #f0f4ff;
-         text-align: center;
-         font-size: 0.95rem;
-         color: #333;
-         }
-         .suggestions-box h3 {
-         margin: 0 0 5px 0;
-         font-size: 1.1rem;
-         color: #667eea;
-         }
-         .suggestions-box a {
-         color: #764ba2;
-         text-decoration: none;
-         font-weight: 600;
-         }
-         .suggestions-box a:hover {
-         text-decoration: underline;
-         }
-      </style>
-   </head>
-   <body>
-      <div class="container">
-         <div class="header">
-            <h1>Homework Tracker</h1>
-            <div class="clock">
-               <div id="time"></div>
-               <div id="date"></div>
-            </div>
-         </div>
-         <!-- SIDEBAR -->
-         <div class="sidebar">
-            <h3>Settings</h3>
-            <label class="switch">
-            <input type="checkbox" id="cpuToggle">
-            <span class="slider"></span>
-            </label>
-            <span class="toggle-label">Reduce CPU Usage</span>
-         </div>
-         <div class="input-container">
-            <input class="task-input" placeholder="What needs to be done?">
-            <input type="datetime-local" class="due-input">
-            <button class="add-btn">Add</button>
-         </div>
-         <div class="filters">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="active">Active</button>
-            <button class="filter-btn" data-filter="completed">Completed</button>
-         </div>
-         <ul class="task-list"></ul>
-         <button id="toggleArchive" style="margin-top:10px; padding:8px 16px; border-radius:12px; border:none; background:#764ba2; color:white; cursor:pointer;">Show Archive</button>
-         <ul class="archive-list" style="list-style:none; padding:0; margin-top:10px; display:none;"></ul>
-         <!-- SUGGESTIONS BOX -->
-         <div class="suggestions-box">
-            <h3>Have a suggestion?</h3>
-            <p>Got ideas? <a href="https://forms.gle/rzsFsG4gnU6VKWmk9" target="_blank">Submit here</a>.</p>
-         </div>
-      </div>
-      <!-- end of container -->
-      <!-- EDIT MODAL -->
-      <div class="modal-overlay">
-         <div class="modal">
-            <h2>Edit Task</h2>
-            <input id="editInput">
-            <div class="modal-actions">
-               <button class="cancel-btn">Cancel</button>
-               <button class="save-btn">Save</button>
-            </div>
-         </div>
-      </div>
-      <script>
-         /* CLOCK */
-         const timeEl = document.getElementById('time');
-         const dateEl = document.getElementById('date');
-         
-         function updateClock() {
-         const now = new Date();
-         
-         timeEl.textContent = now.toLocaleTimeString([], {
-         hour: 'numeric',
-         minute: '2-digit',
-         second: '2-digit'
-         });
-         
-         dateEl.textContent = now.toLocaleDateString([], {
-         weekday: 'long',
-         year: 'numeric',
-         month: 'long',
-         day: 'numeric'
-         });
-         
-         // update tab
-         updateTabTitle();
-         }
-         
-         updateClock();
-         setInterval(updateClock, 1000);
-         
-         
-         /* TASK APP */
-         const input = document.querySelector('.task-input');
-         const dueInput = document.querySelector('.due-input');
-         const addBtn = document.querySelector('.add-btn');
-         const list = document.querySelector('.task-list');
-         const filters = document.querySelectorAll('.filter-btn');
-         
-         const modal = document.querySelector('.modal-overlay');
-         const editInput = document.getElementById('editInput');
-         const saveBtn = document.querySelector('.save-btn');
-         const cancelBtn = document.querySelector('.cancel-btn');
-         
-         let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-         let archive = JSON.parse(localStorage.getItem('archive')) || [];
-         let currentFilter = 'all';
-         let editingId = null;
-         
-         addBtn.addEventListener('click', addTask);
-         input.addEventListener('keydown', e => e.key === 'Enter' && addTask());
-         
-         filters.forEach(btn => {
-             btn.addEventListener('click', () => {
-                 filters.forEach(b => b.classList.remove('active'));
-                 btn.classList.add('active');
-                 currentFilter = btn.dataset.filter;
-                 render();
-             });
-         });
-         
-         saveBtn.onclick = saveEdit;
-         cancelBtn.onclick = closeModal;
-         modal.onclick = e => e.target === modal && closeModal();
-         
-         function updateTabTitle() {
-         const now = new Date();
-         const timeString = now.toLocaleTimeString([], {
-         hour: 'numeric',
-         minute: '2-digit',
-         second: '2-digit'
-         });
-         document.title = `Hmwk Tracker - ${timeString}`;
-         }
-         
-         function addTask() {
-             const text = input.value.trim();
-             if (!text) return;
-         
-             tasks.unshift({
-                 id: Date.now(),
-                 text,
-                 completed: false,
-                 due: dueInput.value || null
-             });
-         
-             input.value = '';
-             dueInput.value = '';
-             save();
-         }
-         
-         function openEdit(id) {
-             editingId = id;
-             editInput.value = tasks.find(t => t.id === id).text;
-             modal.style.display = 'flex';
-             editInput.focus();
-         }
-         
-         function saveEdit() {
-             const task = tasks.find(t => t.id === editingId);
-             if (task && editInput.value.trim()) {
-                 task.text = editInput.value.trim();
-                 save();
-             }
-             closeModal();
-         }
-         
-         function closeModal() {
-             modal.style.display = 'none';
-             editingId = null;
-         }
-         
-         function toggleTask(id) {
-             const task = tasks.find(t => t.id === id);
-             task.completed = !task.completed;
-             save();
-         }
-         
-         function deleteTask(id) {
-         const task = tasks.find(t => t.id === id);
-         if (task) archive.unshift(task); // move to archive
-         tasks = tasks.filter(t => t.id !== id);
-         localStorage.setItem('archive', JSON.stringify(archive)); // save archive
-         save(); // re-render tasks
-         }
-         
-         function getTimeRemaining(due) {
-             if (!due) return '';
-         
-             const now = new Date();
-             const dueDate = new Date(due);
-         
-             // Format the due date nicely
-             const formattedDate = dueDate.toLocaleString([], {
-                 year: 'numeric',
-                 month: 'short',
-                 day: 'numeric',
-                 hour: '2-digit',
-                 minute: '2-digit'
-             });
-         
-             const diff = dueDate - now;
-         
-             if (diff <= 0) return `Due: ${formattedDate} ⏰ Past due date`;
-         
-             const hours = Math.floor(diff / (1000 * 60 * 60));
-             const minutes = Math.floor((diff / (1000 * 60)) % 60);
-             const seconds = Math.floor((diff / 1000) % 60);
-         
-             return `Due: ${formattedDate} ⏳ ${hours}h ${minutes}m ${seconds}s`;
-         }
-         
-         function render() {
-             let filtered = tasks;
-             if (currentFilter === 'active') filtered = tasks.filter(t => !t.completed);
-             if (currentFilter === 'completed') filtered = tasks.filter(t => t.completed);
-         
-             list.innerHTML = filtered.map(t => `
-                 <li class="task-item">
-                     <input type="checkbox" ${t.completed ? 'checked' : ''} data-id="${t.id}">
-                     <div>
-                         <span class="task-text ${t.completed ? 'completed' : ''}">${t.text}</span>
-                         <div class="due-time">${getTimeRemaining(t.due)}</div>
-                     </div>
-                     <div class="task-actions">
-                         <button class="edit-btn" data-id="${t.id}">✏️</button>
-                         <button class="delete-btn" data-id="${t.id}">🗑️</button>
-                     </div>
-                 </li>
-             `).join('');
-         
-             document.querySelectorAll('.task-item').forEach(item => {
-                 item.querySelector('input').onchange = e =>
-                     toggleTask(+e.target.dataset.id);
-         
-                 item.querySelector('.edit-btn').onclick = e =>
-                     openEdit(+e.target.dataset.id);
-         
-                 item.querySelector('.delete-btn').onclick = e =>
-                     deleteTask(+e.target.dataset.id);
-             });
-         }
-         
-         function save() {
-             localStorage.setItem('tasks', JSON.stringify(tasks));
-             render();
-         }
-         
-         render();
-         const archiveList = document.querySelector('.archive-list');
-         const toggleArchiveBtn = document.getElementById('toggleArchive');
-         let archiveVisible = false;
-         
-         toggleArchiveBtn.addEventListener('click', () => {
-         archiveVisible = !archiveVisible;
-         archiveList.style.display = archiveVisible ? 'block' : 'none';
-         toggleArchiveBtn.textContent = archiveVisible ? 'Hide Archive' : 'Show Archive';
-         renderArchive();
-         });
-         
-         function renderArchive() {
-         archiveList.innerHTML = archive.map(t => `
-         <li class="task-item" style="opacity:0.7;">
-            <span class="task-text completed">${t.text}</span>
-            <div class="due-time">${t.due ? new Date(t.due).toLocaleString() : ''}</div>
-         </li>
-         `).join('');
-         }
-         // --- Auto-clear archived tasks every 24 hours ---
-         setInterval(() => {
-         if (archive.length > 0) {
-         const now = Date.now();
-         // Filter out tasks archived more than 24 hours ago
-         archive = archive.filter(t => now - t.id < 24 * 60 * 60 * 1000);
-         localStorage.setItem('archive', JSON.stringify(archive));
-         renderArchive();
-         console.log("Archived tasks cleared automatically if older than 24 hours.");
-         }
-         }, 24 * 60 * 60 * 1000); // 24 hours in milliseconds
-         
-         const cpuToggle = document.getElementById('cpuToggle');
-         
-         // Load saved toggle state from localStorage
-         let savedToggle = localStorage.getItem('cpuToggle') === 'true';
-         cpuToggle.checked = savedToggle;
-         
-         // Set initial render interval based on toggle state
-         let renderInterval = cpuToggle.checked ? 5000 : 1000;
-         let renderTimer = setInterval(render, renderInterval);
-         
-         // Listen for toggle changes
-         cpuToggle.addEventListener('change', () => {
-             clearInterval(renderTimer); // stop previous interval
-         
-             // Update interval based on toggle
-             renderInterval = cpuToggle.checked ? 5000 : 1000;
-             renderTimer = setInterval(render, renderInterval);
-         
-             // Save toggle state in localStorage
-             localStorage.setItem('cpuToggle', cpuToggle.checked);
-         });
-         
-         // --- Live reload on GitHub updates ---
-         let lastVersion = null;
-         const checkInterval = 20000; // check every 20 seconds
-         
-         async function checkForUpdate() {
-         try {
-         const response = await fetch(window.location.href, { cache: "no-store" });
-         const text = await response.text();
-         
-         // Compare to last version
-         if (lastVersion && lastVersion !== text) {
-            console.log("Site updated, reloading...");
-            location.reload();
-         }
-         
-         lastVersion = text;
-         } catch (err) {
-         console.error("Failed to check for updates:", err);
-         }
-         }
-         
-         // Start polling
-         setInterval(checkForUpdate, checkInterval);
-         
-      </script>
-   </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hmwk Tracker</title>
+<style>
+*{box-sizing:border-box;font-family:Segoe UI,sans-serif}
+body{
+margin:0;
+background:linear-gradient(135deg,#667eea,#764ba2);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+.container{
+background:white;
+border-radius:20px;
+padding:30px;
+width:100%;
+max-width:650px;
+}
+.header h1{
+text-align:center;
+font-size:2.4rem;
+background:linear-gradient(135deg,#667eea,#764ba2);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+.clock{text-align:center;margin-bottom:15px}
+#time{
+font-size:1.6rem;
+font-weight:600;
+color:#333;
+}
+
+#date{
+font-size:0.9rem;
+color:#666;
+}
+.input-container{
+display:flex;
+gap:10px;
+margin:20px 0;
+flex-wrap:wrap;
+}
+.task-input,.due-input,select{
+flex:1;
+padding:12px;
+border-radius:12px;
+border:2px solid #ddd;
+}
+.add-btn{
+padding:12px 22px;
+border:none;
+border-radius:12px;
+background:linear-gradient(135deg,#667eea,#764ba2);
+color:white;
+cursor:pointer;
+}
+.filters,.course-filters{
+display:flex;
+justify-content:center;
+gap:8px;
+flex-wrap:wrap;
+margin-top:10px;
+}
+.filter-btn,.course-tab{
+padding:8px 14px;
+border-radius:20px;
+border:none;
+cursor:pointer;
+background:#eee;
+}
+.filter-btn.active{
+background:linear-gradient(135deg,#667eea,#764ba2);
+color:white;
+}
+.course-tab{
+position:relative;
+}
+.course-tab.active{
+background:linear-gradient(135deg,#667eea,#764ba2);
+color:white;
+}
+.delete-course{
+display:none;
+margin-left:6px;
+color:red;
+cursor:pointer;
+}
+.course-tab:hover .delete-course{
+display:inline;
+}
+.task-list,.archive-list{
+list-style:none;
+padding:0;
+margin:0;
+}
+.task-item{
+background:#f7f7f7;
+padding:14px;
+border-radius:12px;
+display:flex;
+align-items:center;
+gap:10px;
+margin-top:10px;
+}
+.task-text.completed{
+text-decoration:line-through;
+color:#999;
+}
+.due-time{font-size:0.8rem;color:#555}
+.course-label{font-size:0.75rem;color:#764ba2}
+.task-actions{margin-left:auto;display:flex;gap:8px}
+button{cursor:pointer;background:none;border:none}
+.modal-overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.5);
+backdrop-filter:blur(6px);
+display:none;
+justify-content:center;
+align-items:center;
+}
+.modal{
+background:white;
+padding:25px;
+border-radius:16px;
+width:90%;
+max-width:400px;
+}
+.modal input,.modal select{
+width:100%;
+margin-bottom:12px;
+padding:10px;
+border-radius:10px;
+border:2px solid #ddd;
+}
+.modal-actions{
+display:flex;
+justify-content:flex-end;
+gap:10px;
+}
+.save-btn{
+background:linear-gradient(135deg,#667eea,#764ba2);
+color:white;
+padding:8px 16px;
+border-radius:10px;
+}
+.cancel-btn{
+background:#eee;
+padding:8px 16px;
+border-radius:10px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<div class="header">
+<h1>Homework Tracker</h1>
+<div class="clock">
+<div id="time"></div>
+<div id="date"></div>
+</div>
+</div>
+
+<div class="input-container">
+<input class="task-input" placeholder="What needs to be done?">
+<input type="datetime-local" class="due-input">
+<select id="courseSelect">
+<option value="">No Section</option>
+</select>
+<button class="add-btn">Add</button>
+</div>
+
+<div class="filters">
+<button class="filter-btn active" data-filter="all">All</button>
+<button class="filter-btn" data-filter="active">Active</button>
+<button class="filter-btn" data-filter="completed">Completed</button>
+</div>
+
+<div class="course-filters"></div>
+
+<div style="text-align:center;margin-top:12px;">
+<input id="newCourseInput" placeholder="Create new course or section name"
+style="padding:8px;border-radius:10px;border:2px solid #ddd;">
+<button id="addCourseBtn"
+style="padding:8px 14px;border-radius:10px;border:none;background:#667eea;color:white;">
+Add
+</button>
+</div>
+
+<ul class="task-list"></ul>
+
+<button id="toggleArchive"
+style="margin-top:10px;padding:8px 16px;border-radius:12px;border:none;background:#764ba2;color:white;">
+Show Archive
+</button>
+
+<ul class="archive-list" style="display:none;"></ul>
+</div>
+
+<div class="modal-overlay">
+<div class="modal">
+<h2>Edit Task</h2>
+<input id="editInput">
+<select id="editCourseSelect"></select>
+<div class="modal-actions">
+<button class="cancel-btn">Cancel</button>
+<button class="save-btn">Save</button>
+</div>
+</div>
+</div>
+
+<script>
+/* CLOCK */
+const timeEl=document.getElementById('time');
+const dateEl=document.getElementById('date');
+function updateClock(){
+const now=new Date();
+timeEl.textContent=now.toLocaleTimeString();
+dateEl.textContent=now.toLocaleDateString();
+document.title="Hmwk Tracker - "+now.toLocaleTimeString();
+}
+setInterval(updateClock,1000);updateClock();
+
+/* DATA */
+let tasks=JSON.parse(localStorage.getItem('tasks'))||[];
+let archive=JSON.parse(localStorage.getItem('archive'))||[];
+let courses=JSON.parse(localStorage.getItem('courses'))||[];
+let currentFilter='all';
+let selectedCourse=null;
+let editingId=null;
+
+/* ELEMENTS */
+const input=document.querySelector('.task-input');
+const dueInput=document.querySelector('.due-input');
+const addBtn=document.querySelector('.add-btn');
+const list=document.querySelector('.task-list');
+const filters=document.querySelectorAll('.filter-btn');
+const courseFilters=document.querySelector('.course-filters');
+const newCourseInput=document.getElementById('newCourseInput');
+const addCourseBtn=document.getElementById('addCourseBtn');
+const courseSelect=document.getElementById('courseSelect');
+const modal=document.querySelector('.modal-overlay');
+const editInput=document.getElementById('editInput');
+const editCourseSelect=document.getElementById('editCourseSelect');
+const saveBtn=document.querySelector('.save-btn');
+const cancelBtn=document.querySelector('.cancel-btn');
+const archiveList=document.querySelector('.archive-list');
+const toggleArchiveBtn=document.getElementById('toggleArchive');
+
+/* COURSES */
+function saveCourses(){
+localStorage.setItem('courses',JSON.stringify(courses));
+}
+
+function renderCourseDropdowns(){
+courseSelect.innerHTML=`<option value="">No Section</option>`+
+courses.map(c=>`<option value="${c}">${c}</option>`).join('');
+editCourseSelect.innerHTML=courseSelect.innerHTML;
+}
+
+function renderCourses(){
+courseFilters.innerHTML=courses.map(c=>`
+<div class="course-tab ${selectedCourse===c?'active':''}" data-course="${c}">
+${c}<span class="delete-course">✖</span>
+</div>`).join('');
+
+document.querySelectorAll('.course-tab').forEach(tab=>{
+tab.onclick=()=>{
+selectedCourse=tab.dataset.course;
+render();
+renderCourses();
+};
+tab.querySelector('.delete-course').onclick=(e)=>{
+e.stopPropagation();
+courses=courses.filter(x=>x!==tab.dataset.course);
+tasks.forEach(t=>{if(t.course===tab.dataset.course)t.course=null});
+if(selectedCourse===tab.dataset.course)selectedCourse=null;
+saveCourses();
+save();
+renderCourses();
+renderCourseDropdowns();
+};
+});
+}
+
+addCourseBtn.onclick=()=>{
+const name=newCourseInput.value.trim();
+if(!name||courses.includes(name))return;
+courses.push(name);
+newCourseInput.value='';
+saveCourses();
+renderCourses();
+renderCourseDropdowns();
+};
+
+/* TASKS */
+function save(){
+localStorage.setItem('tasks',JSON.stringify(tasks));
+localStorage.setItem('archive',JSON.stringify(archive));
+render();
+}
+
+function addTask(){
+const text=input.value.trim();
+if(!text)return;
+tasks.unshift({
+id:Date.now(),
+text,
+completed:false,
+due:dueInput.value||null,
+course:courseSelect.value||null
+});
+input.value='';
+dueInput.value='';
+courseSelect.value='';
+save();
+}
+
+addBtn.onclick=addTask;
+input.addEventListener('keydown',e=>e.key==='Enter'&&addTask());
+
+filters.forEach(btn=>{
+btn.onclick=()=>{
+filters.forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+currentFilter=btn.dataset.filter;
+render();
+};
+});
+
+function getTimeRemaining(due) {
+    if (!due) return '';
+
+    const now = new Date();
+    const dueDate = new Date(due);
+
+    const formattedDate = dueDate.toLocaleString([], {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    const diff = dueDate - now;
+
+    if (diff <= 0) return `Due: ${formattedDate} ⏰ Past due date`;
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    return `Due: ${formattedDate} ⏳ ${hours}h ${minutes}m ${seconds}s`;
+}
+function render(){
+let filtered=[...tasks];
+if(currentFilter==='active')filtered=filtered.filter(t=>!t.completed);
+if(currentFilter==='completed')filtered=filtered.filter(t=>t.completed);
+if(selectedCourse)filtered=filtered.filter(t=>t.course===selectedCourse);
+
+list.innerHTML=filtered.map(t=>`
+<li class="task-item">
+<input type="checkbox" ${t.completed?'checked':''} data-id="${t.id}">
+<div>
+<span class="task-text ${t.completed?'completed':''}">${t.text}</span>
+<div class="due-time">${getTimeRemaining(t.due)}</div>
+${t.course?`<div class="course-label">📚 ${t.course}</div>`:''}
+</div>
+<div class="task-actions">
+<button data-edit="${t.id}">✏️</button>
+<button data-del="${t.id}">🗑️</button>
+</div>
+</li>`).join('');
+
+document.querySelectorAll('[data-id]').forEach(cb=>{
+cb.onchange=()=>{const t=tasks.find(x=>x.id==cb.dataset.id);t.completed=!t.completed;save();};
+});
+
+document.querySelectorAll('[data-edit]').forEach(btn=>{
+btn.onclick=()=>{
+editingId=btn.dataset.edit;
+const t=tasks.find(x=>x.id==editingId);
+editInput.value=t.text;
+editCourseSelect.value=t.course||'';
+modal.style.display='flex';
+};
+});
+
+document.querySelectorAll('[data-del]').forEach(btn=>{
+btn.onclick=()=>{
+const t=tasks.find(x=>x.id==btn.dataset.del);
+archive.unshift({
+    ...t,
+    archivedAt: Date.now()
+});
+tasks=tasks.filter(x=>x.id!=btn.dataset.del);
+save();
+};
+});
+}
+
+/* MODAL */
+saveBtn.onclick=()=>{
+const t=tasks.find(x=>x.id==editingId);
+if(t&&editInput.value.trim()){
+t.text=editInput.value.trim();
+t.course=editCourseSelect.value||null;
+}
+modal.style.display='none';
+save();
+};
+cancelBtn.onclick=()=>modal.style.display='none';
+modal.onclick=e=>{if(e.target===modal)modal.style.display='none'};
+
+/* ARCHIVE */
+let archiveVisible=false;
+toggleArchiveBtn.onclick=()=>{
+archiveVisible=!archiveVisible;
+archiveList.style.display=archiveVisible?'block':'none';
+toggleArchiveBtn.textContent=archiveVisible?'Hide Archive':'Show Archive';
+archiveList.innerHTML=archive.map(t=>`
+<li class="task-item" style="opacity:0.7;">
+${t.text}
+<div class="due-time">
+🗑️ Auto deletes in ${Math.max(
+    0,
+    Math.ceil((24 * 60 * 60 * 1000 - (Date.now() - t.archivedAt)) / (60 * 60 * 1000))
+)} hrs
+</div>
+</li>`).join('');
+};
+function cleanArchive() {
+    const DAY = 24 * 60 * 60 * 1000;
+    const now = Date.now();
+
+    archive = archive.filter(t =>
+        t.archivedAt && now - t.archivedAt < DAY
+    );
+
+    localStorage.setItem('archive', JSON.stringify(archive));
+}
+/* INIT */
+renderCourses();
+renderCourseDropdowns();
+render();
+cleanArchive();
+setInterval(cleanArchive, 60 * 60 * 1000); // every hour
+setInterval(() => {
+    if (tasks.some(t => t.due && !t.completed)) {
+        render();
+    }
+}, 1000);
+</script>
+
+</body>
 </html>
