@@ -4,459 +4,772 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hmwk Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;font-family:Segoe UI,sans-serif}
+:root {
+  --bg: #0e0e11;
+  --surface: #17171c;
+  --surface2: #1e1e25;
+  --surface3: #26262f;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #f0f0f3;
+  --muted: #8888a0;
+  --faint: #44445a;
+  --accent: #7c6af7;
+  --accent2: #a89cf8;
+  --accent-glow: rgba(124,106,247,0.18);
+  --red: #f05a5a;
+  --red-bg: rgba(240,90,90,0.1);
+  --amber: #f0a84e;
+  --amber-bg: rgba(240,168,78,0.1);
+  --green: #4ecf8e;
+  --green-bg: rgba(78,207,142,0.1);
+  --blue: #4ea8f0;
+  --blue-bg: rgba(78,168,240,0.1);
+  --font: 'DM Sans', sans-serif;
+  --mono: 'DM Mono', monospace;
+  --rad: 12px;
+  --rad-sm: 8px;
+  --rad-pill: 99px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
 body{
-margin:0;
-background:linear-gradient(135deg,#667eea,#764ba2);
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  padding:32px 16px 80px;
 }
-.container{
-background:white;
-border-radius:20px;
-padding:30px;
-width:100%;
-max-width:650px;
+.app{width:100%;max-width:620px}
+
+/* HEADER */
+.header{margin-bottom:28px}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.logo{font-size:22px;font-weight:600;letter-spacing:-0.5px;color:var(--text)}
+.logo span{color:var(--accent)}
+.clock-wrap{text-align:right}
+#time{font-family:var(--mono);font-size:16px;font-weight:500;color:var(--accent2);letter-spacing:.05em}
+#date{font-size:12px;color:var(--muted);margin-top:2px}
+.stats-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.stat-pill{
+  font-size:12px;padding:4px 12px;border-radius:var(--rad-pill);
+  background:var(--surface2);border:0.5px solid var(--border);color:var(--muted);
+  font-family:var(--mono)
 }
-.header h1{
-text-align:center;
-font-size:2.4rem;
-background:linear-gradient(135deg,#667eea,#764ba2);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
+.stat-pill.red{background:var(--red-bg);border-color:rgba(240,90,90,0.25);color:var(--red)}
+.stat-pill.green{background:var(--green-bg);border-color:rgba(78,207,142,0.25);color:var(--green)}
+.stat-pill.amber{background:var(--amber-bg);border-color:rgba(240,168,78,0.25);color:var(--amber)}
+
+/* ADD TASK CARD */
+.add-card{
+  background:var(--surface);
+  border:0.5px solid var(--border2);
+  border-radius:var(--rad);
+  padding:18px;
+  margin-bottom:20px;
 }
-.clock{text-align:center;margin-bottom:15px}
-#time{
-font-size:1.6rem;
-font-weight:600;
-color:#333;
+.add-card-title{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);margin-bottom:14px;font-weight:500}
+.add-main-row{display:flex;gap:10px;margin-bottom:12px}
+.add-main-row input{
+  flex:1;font-family:var(--font);font-size:14px;font-weight:400;
+  background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--rad-sm);
+  padding:10px 14px;color:var(--text);outline:none;transition:.15s border-color
+}
+.add-main-row input::placeholder{color:var(--faint)}
+.add-main-row input:focus{border-color:var(--accent)}
+.add-meta-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.add-meta-row input,.add-meta-row select{
+  font-family:var(--font);font-size:13px;
+  background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--rad-sm);
+  padding:9px 12px;color:var(--text);outline:none;transition:.15s border-color;
+  -webkit-appearance:none;appearance:none
+}
+.add-meta-row input:focus,.add-meta-row select:focus{border-color:var(--accent)}
+.add-meta-row select option{background:#1e1e25}
+input[type="datetime-local"]::-webkit-calendar-picker-indicator{filter:invert(0.5) brightness(1.5)}
+.add-bottom-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pri-group{display:flex;gap:6px;align-items:center;flex:1;flex-wrap:wrap}
+.pri-label{font-size:12px;color:var(--muted);white-space:nowrap}
+.pri-opt{
+  padding:5px 13px;border-radius:var(--rad-pill);border:0.5px solid var(--border);
+  background:none;font-size:12px;cursor:pointer;color:var(--muted);font-family:var(--font);
+  transition:.12s all
+}
+.pri-opt:hover{border-color:var(--border2)}
+.pri-opt.sel-low{background:var(--green-bg);color:var(--green);border-color:rgba(78,207,142,0.3)}
+.pri-opt.sel-med{background:var(--amber-bg);color:var(--amber);border-color:rgba(240,168,78,0.3)}
+.pri-opt.sel-high{background:var(--red-bg);color:var(--red);border-color:rgba(240,90,90,0.3)}
+.add-btn{
+  padding:9px 22px;border-radius:var(--rad-sm);border:none;
+  background:var(--accent);color:#fff;font-family:var(--font);font-size:13px;font-weight:500;
+  cursor:pointer;transition:.12s opacity;white-space:nowrap
+}
+.add-btn:hover{opacity:.85}
+.add-btn:active{opacity:.7}
+
+/* COURSES */
+.courses-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.course-chip{
+  padding:6px 13px;border-radius:var(--rad-pill);border:0.5px solid var(--border);
+  background:none;font-size:12px;cursor:pointer;color:var(--muted);font-family:var(--font);
+  transition:.12s all;position:relative;display:flex;align-items:center;gap:5px
+}
+.course-chip:hover{border-color:var(--border2)}
+.course-chip.active{background:var(--accent-glow);border-color:var(--accent);color:var(--accent2)}
+.course-chip.all.active{background:var(--accent-glow);border-color:var(--accent);color:var(--accent2)}
+.del-course{font-size:10px;color:var(--red);cursor:pointer;opacity:0;transition:.12s opacity;line-height:1}
+.course-chip:hover .del-course{opacity:1}
+.new-course-wrap{display:flex;gap:6px}
+.new-course-input{
+  font-family:var(--font);font-size:12px;background:var(--surface2);border:0.5px solid var(--border);
+  border-radius:var(--rad-pill);padding:5px 12px;color:var(--text);outline:none;width:160px;transition:.15s border-color
+}
+.new-course-input:focus{border-color:var(--accent)}
+.new-course-input::placeholder{color:var(--faint)}
+.new-course-btn{
+  padding:5px 12px;border-radius:var(--rad-pill);border:0.5px solid var(--accent);
+  background:none;font-size:12px;cursor:pointer;color:var(--accent);font-family:var(--font);transition:.12s
+}
+.new-course-btn:hover{background:var(--accent-glow)}
+
+/* FILTERS */
+.filters-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.filt-btn{
+  padding:6px 14px;border-radius:var(--rad-pill);border:0.5px solid var(--border);
+  background:none;font-size:12px;cursor:pointer;color:var(--muted);font-family:var(--font);transition:.12s
+}
+.filt-btn:hover{border-color:var(--border2)}
+.filt-btn.active{background:var(--surface2);border-color:var(--border2);color:var(--text)}
+
+/* SECTIONS */
+.section-label{
+  font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);
+  font-weight:500;margin-bottom:10px;margin-top:22px;display:flex;align-items:center;gap:8px
+}
+.section-label span{
+  font-size:11px;font-family:var(--mono);background:var(--surface2);
+  border-radius:var(--rad-pill);padding:1px 7px;color:var(--muted);font-weight:400;letter-spacing:0
+}
+.empty-msg{
+  text-align:center;padding:28px 0;font-size:13px;color:var(--faint);
+  border:0.5px dashed var(--border);border-radius:var(--rad);
 }
 
-#date{
-font-size:0.9rem;
-color:#666;
+/* TASK */
+.task{
+  background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad);
+  padding:13px 15px;margin-bottom:7px;display:flex;gap:11px;align-items:flex-start;
+  transition:.2s opacity,.2s transform
 }
-.input-container{
-display:flex;
-gap:10px;
-margin:20px 0;
-flex-wrap:wrap;
+.task.overdue{border-left:2px solid var(--red)}
+.task.done-item{opacity:0.5}
+.task.done-item:hover{opacity:0.7}
+.task-check{
+  width:18px;height:18px;border-radius:5px;border:1.5px solid var(--faint);flex-shrink:0;
+  margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:.15s all;background:none
 }
-.task-input,.due-input,select{
-flex:1;
-padding:12px;
-border-radius:12px;
-border:2px solid #ddd;
+.task-check.checked{background:var(--accent);border-color:var(--accent)}
+.task-check svg{display:none}
+.task-check.checked svg{display:block}
+.task-body{flex:1;min-width:0}
+.task-text{font-size:14px;color:var(--text);line-height:1.45;word-break:break-word}
+.task-text.strike{text-decoration:line-through;color:var(--muted)}
+.task-meta{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center}
+.tag{font-size:11px;padding:2px 9px;border-radius:var(--rad-pill);font-weight:400;white-space:nowrap}
+.tag-course{background:rgba(124,106,247,0.12);color:var(--accent2);border:0.5px solid rgba(124,106,247,0.25)}
+.tag-overdue{background:var(--red-bg);color:var(--red)}
+.tag-soon{background:var(--amber-bg);color:var(--amber)}
+.tag-due{background:var(--surface2);color:var(--muted)}
+.tag-done-time{background:var(--surface2);color:var(--faint)}
+.tag-low{background:var(--green-bg);color:var(--green)}
+.tag-med{background:var(--amber-bg);color:var(--amber)}
+.tag-high{background:var(--red-bg);color:var(--red)}
+.countdown{font-size:11px;font-family:var(--mono);color:var(--faint)}
+.task-actions{display:flex;gap:3px;flex-shrink:0;opacity:0;transition:.12s opacity}
+.task:hover .task-actions{opacity:1}
+.act-btn{
+  background:none;border:none;cursor:pointer;font-size:13px;padding:3px 6px;
+  border-radius:var(--rad-sm);color:var(--muted);transition:.12s background
 }
-.add-btn{
-padding:12px 22px;
-border:none;
-border-radius:12px;
-background:linear-gradient(135deg,#667eea,#764ba2);
-color:white;
-cursor:pointer;
+.act-btn:hover{background:var(--surface3)}
+
+/* ARCHIVE */
+.archive-toggle{
+  margin-top:20px;padding:8px 16px;border-radius:var(--rad-sm);border:0.5px solid var(--border);
+  background:none;font-size:12px;color:var(--muted);font-family:var(--font);cursor:pointer;transition:.12s
 }
-.filters,.course-filters{
-display:flex;
-justify-content:center;
-gap:8px;
-flex-wrap:wrap;
-margin-top:10px;
+.archive-toggle:hover{border-color:var(--border2);color:var(--text)}
+.archive-section{margin-top:12px}
+.restore-btn{
+  font-size:11px;padding:3px 10px;border-radius:var(--rad-pill);border:0.5px solid var(--border);
+  background:none;cursor:pointer;color:var(--muted);font-family:var(--font);transition:.12s;white-space:nowrap
 }
-.filter-btn,.course-tab{
-padding:8px 14px;
-border-radius:20px;
-border:none;
-cursor:pointer;
-background:#eee;
-}
-.filter-btn.active{
-background:linear-gradient(135deg,#667eea,#764ba2);
-color:white;
-}
-.course-tab{
-position:relative;
-}
-.course-tab.active{
-background:linear-gradient(135deg,#667eea,#764ba2);
-color:white;
-}
-.delete-course{
-display:none;
-margin-left:6px;
-color:red;
-cursor:pointer;
-}
-.course-tab:hover .delete-course{
-display:inline;
-}
-.task-list,.archive-list{
-list-style:none;
-padding:0;
-margin:0;
-}
-.task-item{
-background:#f7f7f7;
-padding:14px;
-border-radius:12px;
-display:flex;
-align-items:center;
-gap:10px;
-margin-top:10px;
-}
-.task-text.completed{
-text-decoration:line-through;
-color:#999;
-}
-.due-time{font-size:0.8rem;color:#555}
-.course-label{font-size:0.75rem;color:#764ba2}
-.task-actions{margin-left:auto;display:flex;gap:8px}
-button{cursor:pointer;background:none;border:none}
+.restore-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* MODAL */
 .modal-overlay{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.5);
-backdrop-filter:blur(6px);
-display:none;
-justify-content:center;
-align-items:center;
+  position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);
+  display:none;justify-content:center;align-items:center;z-index:100
 }
+.modal-overlay.open{display:flex}
 .modal{
-background:white;
-padding:25px;
-border-radius:16px;
-width:90%;
-max-width:400px;
+  background:var(--surface);border:0.5px solid var(--border2);border-radius:16px;
+  padding:24px;width:90%;max-width:420px
 }
-.modal input,.modal select{
-width:100%;
-margin-bottom:12px;
-padding:10px;
-border-radius:10px;
-border:2px solid #ddd;
+.modal h3{font-size:16px;font-weight:500;margin-bottom:18px;color:var(--text)}
+.modal-field{margin-bottom:13px}
+.modal-field label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);display:block;margin-bottom:6px}
+.modal-field input,.modal-field select{
+  width:100%;font-family:var(--font);font-size:14px;
+  background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--rad-sm);
+  padding:10px 13px;color:var(--text);outline:none;transition:.15s border-color;-webkit-appearance:none
 }
-.modal-actions{
-display:flex;
-justify-content:flex-end;
-gap:10px;
+.modal-field input:focus,.modal-field select:focus{border-color:var(--accent)}
+.modal-field select option{background:var(--surface2)}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}
+.modal-cancel{
+  padding:8px 18px;border-radius:var(--rad-sm);border:0.5px solid var(--border);
+  background:none;font-size:13px;cursor:pointer;color:var(--muted);font-family:var(--font);transition:.12s
 }
-.save-btn{
-background:linear-gradient(135deg,#667eea,#764ba2);
-color:white;
-padding:8px 16px;
-border-radius:10px;
+.modal-cancel:hover{border-color:var(--border2);color:var(--text)}
+.modal-save{
+  padding:8px 20px;border-radius:var(--rad-sm);border:none;
+  background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);transition:.12s opacity
 }
-.cancel-btn{
-background:#eee;
-padding:8px 16px;
-border-radius:10px;
+.modal-save:hover{opacity:.85}
+
+/* PRI SELECTOR IN MODAL */
+.pri-modal-group{display:flex;gap:6px}
+.pri-modal-opt{
+  flex:1;padding:7px;text-align:center;border-radius:var(--rad-sm);border:0.5px solid var(--border);
+  background:none;font-size:12px;cursor:pointer;color:var(--muted);font-family:var(--font);transition:.12s
+}
+.pri-modal-opt.sel-low{background:var(--green-bg);color:var(--green);border-color:rgba(78,207,142,0.3)}
+.pri-modal-opt.sel-med{background:var(--amber-bg);color:var(--amber);border-color:rgba(240,168,78,0.3)}
+.pri-modal-opt.sel-high{background:var(--red-bg);color:var(--red);border-color:rgba(240,90,90,0.3)}
+
+@media(max-width:480px){
+  .add-meta-row{grid-template-columns:1fr}
+  .header-top{flex-direction:column;gap:8px}
+  .clock-wrap{text-align:left}
 }
 </style>
 </head>
 <body>
+<div class="app">
 
-<div class="container">
-<div class="header">
-<h1>Homework Tracker</h1>
-<div class="clock">
-<div id="time"></div>
-<div id="date"></div>
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">hmwk<span>.</span></div>
+      <div class="clock-wrap">
+        <div id="time"></div>
+        <div id="date"></div>
+      </div>
+    </div>
+    <div class="stats-row" id="statsRow"></div>
+  </div>
+
+  <!-- ADD TASK -->
+  <div class="add-card">
+    <div class="add-card-title">New task</div>
+    <div class="add-main-row">
+      <input id="taskInput" placeholder="What needs to be done?">
+    </div>
+    <div class="add-meta-row">
+      <input type="datetime-local" id="dueInput">
+      <select id="courseSelect"><option value="">No section</option></select>
+    </div>
+    <div class="add-bottom-row">
+      <div class="pri-group">
+        <span class="pri-label">Priority</span>
+        <button class="pri-opt sel-low" data-pri="low">Low</button>
+        <button class="pri-opt" data-pri="med">Med</button>
+        <button class="pri-opt" data-pri="high">High</button>
+      </div>
+      <button class="add-btn" id="addBtn">Add task</button>
+    </div>
+  </div>
+
+  <!-- COURSES -->
+  <div class="courses-bar" id="coursesBar">
+    <button class="course-chip all active" data-course="">All</button>
+    <div class="new-course-wrap">
+      <input class="new-course-input" id="newCourseInput" placeholder="New section…">
+      <button class="new-course-btn" id="addCourseBtn">+ Add</button>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters-bar">
+    <button class="filt-btn active" data-filter="all">All tasks</button>
+    <button class="filt-btn" data-filter="active">Active</button>
+    <button class="filt-btn" data-filter="completed">Completed</button>
+  </div>
+
+  <!-- TASK LISTS -->
+  <div id="mainList"></div>
+  <div id="completedSection"></div>
+
+  <!-- ARCHIVE -->
+  <button class="archive-toggle" id="archiveToggle">Show archive</button>
+  <div class="archive-section" id="archiveSection" style="display:none"></div>
+
 </div>
-</div>
 
-<div class="input-container">
-<input class="task-input" placeholder="What needs to be done?">
-<input type="datetime-local" class="due-input">
-<select id="courseSelect">
-<option value="">No Section</option>
-</select>
-<button class="add-btn">Add</button>
-</div>
-
-<div class="filters">
-<button class="filter-btn active" data-filter="all">All</button>
-<button class="filter-btn" data-filter="active">Active</button>
-<button class="filter-btn" data-filter="completed">Completed</button>
-</div>
-
-<div class="course-filters"></div>
-
-<div style="text-align:center;margin-top:12px;">
-<input id="newCourseInput" placeholder="Create new course or section name"
-style="padding:8px;border-radius:10px;border:2px solid #ddd;">
-<button id="addCourseBtn"
-style="padding:8px 14px;border-radius:10px;border:none;background:#667eea;color:white;">
-Add
-</button>
-</div>
-
-<ul class="task-list"></ul>
-
-<button id="toggleArchive"
-style="margin-top:10px;padding:8px 16px;border-radius:12px;border:none;background:#764ba2;color:white;">
-Show Archive
-</button>
-
-<ul class="archive-list" style="display:none;"></ul>
-</div>
-
-<div class="modal-overlay">
-<div class="modal">
-<h2>Edit Task</h2>
-<input id="editInput">
-<select id="editCourseSelect"></select>
-<div class="modal-actions">
-<button class="cancel-btn">Cancel</button>
-<button class="save-btn">Save</button>
-</div>
-</div>
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3>Edit task</h3>
+    <div class="modal-field">
+      <label>Task</label>
+      <input id="editText">
+    </div>
+    <div class="modal-field">
+      <label>Due</label>
+      <input type="datetime-local" id="editDue">
+    </div>
+    <div class="modal-field">
+      <label>Section</label>
+      <select id="editCourse"><option value="">No section</option></select>
+    </div>
+    <div class="modal-field">
+      <label>Priority</label>
+      <div class="pri-modal-group">
+        <button class="pri-modal-opt sel-low" data-mpri="low">Low</button>
+        <button class="pri-modal-opt" data-mpri="med">Med</button>
+        <button class="pri-modal-opt" data-mpri="high">High</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" id="modalCancel">Cancel</button>
+      <button class="modal-save" id="modalSave">Save</button>
+    </div>
+  </div>
 </div>
 
 <script>
-/* CLOCK */
-const timeEl=document.getElementById('time');
-const dateEl=document.getElementById('date');
-function updateClock(){
-const now=new Date();
-timeEl.textContent=now.toLocaleTimeString();
-dateEl.textContent=now.toLocaleDateString();
-document.title="Hmwk Tracker - "+now.toLocaleTimeString();
-}
-setInterval(updateClock,1000);updateClock();
+/* ---- STATE ---- */
+let tasks   = JSON.parse(localStorage.getItem('hwt_tasks'))   || [];
+let archive = JSON.parse(localStorage.getItem('hwt_archive')) || [];
+let courses = JSON.parse(localStorage.getItem('hwt_courses')) || [];
+let selCourse = '';
+let curFilter = 'all';
+let editingId = null;
+let editPri = 'low';
+let addPri = 'low';
+let archiveVisible = false;
 
-/* DATA */
-let tasks=JSON.parse(localStorage.getItem('tasks'))||[];
-let archive=JSON.parse(localStorage.getItem('archive'))||[];
-let courses=JSON.parse(localStorage.getItem('courses'))||[];
-let currentFilter='all';
-let selectedCourse=null;
-let editingId=null;
-
-/* ELEMENTS */
-const input=document.querySelector('.task-input');
-const dueInput=document.querySelector('.due-input');
-const addBtn=document.querySelector('.add-btn');
-const list=document.querySelector('.task-list');
-const filters=document.querySelectorAll('.filter-btn');
-const courseFilters=document.querySelector('.course-filters');
-const newCourseInput=document.getElementById('newCourseInput');
-const addCourseBtn=document.getElementById('addCourseBtn');
-const courseSelect=document.getElementById('courseSelect');
-const modal=document.querySelector('.modal-overlay');
-const editInput=document.getElementById('editInput');
-const editCourseSelect=document.getElementById('editCourseSelect');
-const saveBtn=document.querySelector('.save-btn');
-const cancelBtn=document.querySelector('.cancel-btn');
-const archiveList=document.querySelector('.archive-list');
-const toggleArchiveBtn=document.getElementById('toggleArchive');
-
-/* COURSES */
-function saveCourses(){
-localStorage.setItem('courses',JSON.stringify(courses));
-}
-
-function renderCourseDropdowns(){
-courseSelect.innerHTML=`<option value="">No Section</option>`+
-courses.map(c=>`<option value="${c}">${c}</option>`).join('');
-editCourseSelect.innerHTML=courseSelect.innerHTML;
-}
-
-function renderCourses(){
-courseFilters.innerHTML=courses.map(c=>`
-<div class="course-tab ${selectedCourse===c?'active':''}" data-course="${c}">
-${c}<span class="delete-course">✖</span>
-</div>`).join('');
-
-document.querySelectorAll('.course-tab').forEach(tab=>{
-tab.onclick=()=>{
-selectedCourse=tab.dataset.course;
-render();
-renderCourses();
-};
-tab.querySelector('.delete-course').onclick=(e)=>{
-e.stopPropagation();
-courses=courses.filter(x=>x!==tab.dataset.course);
-tasks.forEach(t=>{if(t.course===tab.dataset.course)t.course=null});
-if(selectedCourse===tab.dataset.course)selectedCourse=null;
-saveCourses();
-save();
-renderCourses();
-renderCourseDropdowns();
-};
-});
-}
-
-addCourseBtn.onclick=()=>{
-const name=newCourseInput.value.trim();
-if(!name||courses.includes(name))return;
-courses.push(name);
-newCourseInput.value='';
-saveCourses();
-renderCourses();
-renderCourseDropdowns();
-};
-
-/* TASKS */
+/* ---- SAVE ---- */
 function save(){
-localStorage.setItem('tasks',JSON.stringify(tasks));
-localStorage.setItem('archive',JSON.stringify(archive));
-render();
+  localStorage.setItem('hwt_tasks',   JSON.stringify(tasks));
+  localStorage.setItem('hwt_archive', JSON.stringify(archive));
+}
+function saveCourses(){
+  localStorage.setItem('hwt_courses', JSON.stringify(courses));
 }
 
-function addTask(){
-const text=input.value.trim();
-if(!text)return;
-tasks.unshift({
-id:Date.now(),
-text,
-completed:false,
-due:dueInput.value||null,
-course:courseSelect.value||null
-});
-input.value='';
-dueInput.value='';
-courseSelect.value='';
-save();
+/* ---- CLOCK ---- */
+const timeEl = document.getElementById('time');
+const dateEl = document.getElementById('date');
+function updateClock(){
+  const n = new Date();
+  timeEl.textContent = n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  dateEl.textContent = n.toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'});
+  document.title = 'hmwk. — ' + n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+setInterval(updateClock, 1000); updateClock();
+
+/* ---- PRIORITY HELPERS ---- */
+function priClass(p){ return p==='high'?'sel-high':p==='med'?'sel-med':'sel-low'; }
+
+function setupPriGroup(container, getCurrent, setCurrent){
+  container.querySelectorAll('[data-pri],[data-mpri]').forEach(btn=>{
+    btn.onclick=()=>{
+      const v = btn.dataset.pri || btn.dataset.mpri;
+      setCurrent(v);
+      container.querySelectorAll('[data-pri],[data-mpri]').forEach(b=>{
+        b.className = b.className.replace(/\bsel-\w+/g,'');
+      });
+      btn.classList.add(priClass(v));
+    };
+  });
 }
 
-addBtn.onclick=addTask;
-input.addEventListener('keydown',e=>e.key==='Enter'&&addTask());
+/* ---- ADD PRIORITY BUTTONS ---- */
+const addCard = document.querySelector('.add-card');
+setupPriGroup(addCard, ()=>addPri, v=>{ addPri=v; });
 
-filters.forEach(btn=>{
-btn.onclick=()=>{
-filters.forEach(b=>b.classList.remove('active'));
-btn.classList.add('active');
-currentFilter=btn.dataset.filter;
-render();
+/* ---- COURSES ---- */
+function renderCourseDropdowns(){
+  const opts = `<option value="">No section</option>` +
+    courses.map(c=>`<option value="${c}">${c}</option>`).join('');
+  document.getElementById('courseSelect').innerHTML = opts;
+  document.getElementById('editCourse').innerHTML = opts;
+}
+
+function renderCoursesBar(){
+  const bar = document.getElementById('coursesBar');
+  const newWrap = bar.querySelector('.new-course-wrap');
+  bar.querySelectorAll('.course-chip').forEach(c=>c.remove());
+
+  const allChip = document.createElement('button');
+  allChip.className = 'course-chip all' + (selCourse===''?' active':'');
+  allChip.dataset.course = '';
+  allChip.textContent = 'All';
+  allChip.onclick = ()=>{ selCourse=''; renderCoursesBar(); render(); };
+  bar.insertBefore(allChip, newWrap);
+
+  courses.forEach(c=>{
+    const chip = document.createElement('button');
+    chip.className = 'course-chip' + (selCourse===c?' active':'');
+    chip.dataset.course = c;
+    chip.innerHTML = `${c}<span class="del-course">✕</span>`;
+    chip.onclick = (e)=>{
+      if(e.target.classList.contains('del-course')){
+        if(!confirm(`Delete section "${c}"?`)) return;
+        courses = courses.filter(x=>x!==c);
+        tasks.forEach(t=>{ if(t.course===c) t.course=''; });
+        if(selCourse===c) selCourse='';
+        saveCourses(); save(); renderCoursesBar(); renderCourseDropdowns(); render();
+        return;
+      }
+      selCourse = c; renderCoursesBar(); render();
+    };
+    bar.insertBefore(chip, newWrap);
+  });
+}
+
+document.getElementById('addCourseBtn').onclick = ()=>{
+  const v = document.getElementById('newCourseInput').value.trim();
+  if(!v || courses.includes(v)) return;
+  courses.push(v);
+  document.getElementById('newCourseInput').value = '';
+  saveCourses(); renderCoursesBar(); renderCourseDropdowns();
 };
+document.getElementById('newCourseInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter') document.getElementById('addCourseBtn').click();
 });
 
-function getTimeRemaining(due) {
-    if (!due) return '';
-
-    const now = new Date();
-    const dueDate = new Date(due);
-
-    const formattedDate = dueDate.toLocaleString([], {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-
-    const diff = dueDate - now;
-
-    if (diff <= 0) return `Due: ${formattedDate} ⏰ Past due date`;
-
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff / (1000 * 60)) % 60);
-    const seconds = Math.floor((diff / 1000) % 60);
-
-    return `Due: ${formattedDate} ⏳ ${hours}h ${minutes}m ${seconds}s`;
-}
-function render(){
-let filtered=[...tasks];
-if(currentFilter==='active')filtered=filtered.filter(t=>!t.completed);
-if(currentFilter==='completed')filtered=filtered.filter(t=>t.completed);
-if(selectedCourse)filtered=filtered.filter(t=>t.course===selectedCourse);
-
-list.innerHTML=filtered.map(t=>`
-<li class="task-item">
-<input type="checkbox" ${t.completed?'checked':''} data-id="${t.id}">
-<div>
-<span class="task-text ${t.completed?'completed':''}">${t.text}</span>
-<div class="due-time">${getTimeRemaining(t.due)}</div>
-${t.course?`<div class="course-label">📚 ${t.course}</div>`:''}
-</div>
-<div class="task-actions">
-<button data-edit="${t.id}">✏️</button>
-<button data-del="${t.id}">🗑️</button>
-</div>
-</li>`).join('');
-
-document.querySelectorAll('[data-id]').forEach(cb=>{
-cb.onchange=()=>{const t=tasks.find(x=>x.id==cb.dataset.id);t.completed=!t.completed;save();};
-});
-
-document.querySelectorAll('[data-edit]').forEach(btn=>{
-btn.onclick=()=>{
-editingId=btn.dataset.edit;
-const t=tasks.find(x=>x.id==editingId);
-editInput.value=t.text;
-editCourseSelect.value=t.course||'';
-modal.style.display='flex';
-};
-});
-
-document.querySelectorAll('[data-del]').forEach(btn=>{
-btn.onclick=()=>{
-const t=tasks.find(x=>x.id==btn.dataset.del);
-archive.unshift({
-    ...t,
-    archivedAt: Date.now()
-});
-tasks=tasks.filter(x=>x.id!=btn.dataset.del);
-save();
-};
-});
+/* ---- DUE HELPERS ---- */
+function dueInfo(due){
+  if(!due) return null;
+  const now = Date.now();
+  const d = new Date(due);
+  const diff = d - now;
+  const fmt = d.toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  if(diff < 0){
+    const ago = Math.round(-diff/3600000);
+    return { label: ago < 1 ? 'Just overdue' : `Overdue by ${ago}h`, type:'overdue', fmt };
+  }
+  if(diff < 3600000*3){
+    const mins = Math.floor(diff/60000);
+    const secs = Math.floor((diff%60000)/1000);
+    return { label: `${Math.floor(mins/60)}h ${mins%60}m ${secs}s`, type:'soon', fmt, countdown:true };
+  }
+  const hours = Math.floor(diff/3600000);
+  if(hours < 24) return { label: `${hours}h ${Math.floor((diff%3600000)/60000)}m`, type:'soon', fmt };
+  return { label: fmt, type:'normal', fmt };
 }
 
-/* MODAL */
-saveBtn.onclick=()=>{
-const t=tasks.find(x=>x.id==editingId);
-if(t&&editInput.value.trim()){
-t.text=editInput.value.trim();
-t.course=editCourseSelect.value||null;
+function countdown(due){
+  if(!due) return '';
+  const d = new Date(due); const diff = d - Date.now();
+  if(diff <= 0 || diff > 3600000*3) return '';
+  const h = Math.floor(diff/3600000);
+  const m = Math.floor((diff%3600000)/60000);
+  const s = Math.floor((diff%60000)/1000);
+  return `${h}h ${m}m ${s}s`;
 }
-modal.style.display='none';
-save();
-};
-cancelBtn.onclick=()=>modal.style.display='none';
-modal.onclick=e=>{if(e.target===modal)modal.style.display='none'};
 
-/* ARCHIVE */
-let archiveVisible=false;
-toggleArchiveBtn.onclick=()=>{
-archiveVisible=!archiveVisible;
-archiveList.style.display=archiveVisible?'block':'none';
-toggleArchiveBtn.textContent=archiveVisible?'Hide Archive':'Show Archive';
-archiveList.innerHTML=archive.map(t=>`
-<li class="task-item" style="opacity:0.7;">
-${t.text}
-<div class="due-time">
-🗑️ Auto deletes in ${Math.max(
-    0,
-    Math.ceil((24 * 60 * 60 * 1000 - (Date.now() - t.archivedAt)) / (60 * 60 * 1000))
-)} hrs
-</div>
-</li>`).join('');
-};
-function cleanArchive() {
-    const DAY = 24 * 60 * 60 * 1000;
-    const now = Date.now();
-
-    archive = archive.filter(t =>
-        t.archivedAt && now - t.archivedAt < DAY
-    );
-
-    localStorage.setItem('archive', JSON.stringify(archive));
+/* ---- RENDER STATS ---- */
+function renderStats(){
+  const row = document.getElementById('statsRow');
+  const active = tasks.filter(t=>!t.completed);
+  const overdue = active.filter(t=>t.due && new Date(t.due)<new Date());
+  const doneToday = tasks.filter(t=>{
+    if(!t.completedAt) return false;
+    const d = new Date(t.completedAt); const n = new Date();
+    return d.toDateString()===n.toDateString();
+  });
+  row.innerHTML = '';
+  const add = (text, cls)=>{
+    const p = document.createElement('div');
+    p.className = 'stat-pill' + (cls?' '+cls:'');
+    p.textContent = text;
+    row.appendChild(p);
+  };
+  add(`${active.length} active`);
+  if(overdue.length) add(`${overdue.length} overdue`, 'red');
+  if(doneToday.length) add(`${doneToday.length} done today`, 'green');
 }
-/* INIT */
-renderCourses();
-renderCourseDropdowns();
-render();
-cleanArchive();
-setInterval(cleanArchive, 60 * 60 * 1000); // every hour
-setInterval(() => {
-    if (tasks.some(t => t.due && !t.completed)) {
-        render();
+
+/* ---- BUILD TASK ELEMENT ---- */
+function buildTask(t, isArchive){
+  const li = document.createElement('div');
+  li.className = 'task' + (t.completed?' done-item':'');
+
+  const due = dueInfo(t.due);
+  if(!t.completed && due && due.type==='overdue') li.classList.add('overdue');
+
+  // checkbox
+  const chk = document.createElement('div');
+  chk.className = 'task-check' + (t.completed?' checked':'');
+  chk.innerHTML = t.completed
+    ? `<svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    : '';
+  if(!isArchive){
+    chk.onclick = ()=>{
+      const task = tasks.find(x=>x.id===t.id);
+      task.completed = !task.completed;
+      task.completedAt = task.completed ? Date.now() : null;
+      save(); render();
+    };
+  }
+
+  // body
+  const body = document.createElement('div');
+  body.className = 'task-body';
+  const txt = document.createElement('div');
+  txt.className = 'task-text' + (t.completed?' strike':'');
+  txt.textContent = t.text;
+  body.appendChild(txt);
+
+  const meta = document.createElement('div');
+  meta.className = 'task-meta';
+
+  if(t.course){
+    const s = document.createElement('span');
+    s.className='tag tag-course'; s.textContent=t.course; meta.appendChild(s);
+  }
+  if(t.priority){
+    const p = document.createElement('span');
+    p.className=`tag tag-${t.priority}`; p.textContent=t.priority; meta.appendChild(p);
+  }
+  if(!t.completed && due){
+    const d = document.createElement('span');
+    d.className = `tag tag-${due.type==='overdue'?'overdue':due.type==='soon'?'soon':'due'}`;
+    d.textContent = due.label;
+    meta.appendChild(d);
+    if(due.countdown){
+      const cd = document.createElement('span');
+      cd.className='countdown'; cd.dataset.due=t.due;
+      cd.textContent = countdown(t.due);
+      meta.appendChild(cd);
     }
-}, 1000);
-</script>
+  }
+  if(t.completed && t.completedAt){
+    const ct = document.createElement('span');
+    ct.className='tag tag-done-time';
+    const d2 = new Date(t.completedAt);
+    ct.textContent = 'Done ' + d2.toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    meta.appendChild(ct);
+  }
+  if(isArchive && t.archivedAt){
+    const exp = Math.max(0, Math.ceil((86400000-(Date.now()-t.archivedAt))/3600000));
+    const e = document.createElement('span');
+    e.className='tag tag-due'; e.textContent=`Expires in ${exp}h`; meta.appendChild(e);
+  }
+  body.appendChild(meta);
 
+  // actions
+  const acts = document.createElement('div');
+  acts.className = 'task-actions';
+  if(!isArchive){
+    const editBtn = document.createElement('button');
+    editBtn.className='act-btn'; editBtn.textContent='✏️';
+    editBtn.onclick = ()=>openModal(t.id);
+    acts.appendChild(editBtn);
+
+    const delBtn = document.createElement('button');
+    delBtn.className='act-btn'; delBtn.textContent='🗑️';
+    delBtn.onclick = ()=>{
+      const task = tasks.find(x=>x.id===t.id);
+      archive.unshift({...task, archivedAt:Date.now()});
+      tasks = tasks.filter(x=>x.id!==t.id);
+      save(); render();
+    };
+    acts.appendChild(delBtn);
+  } else {
+    const restBtn = document.createElement('button');
+    restBtn.className='restore-btn'; restBtn.textContent='Restore';
+    restBtn.onclick = ()=>{
+      const task = archive.find(x=>x.id===t.id);
+      const restored = {...task};
+      delete restored.archivedAt;
+      restored.completed = false;
+      restored.completedAt = null;
+      tasks.unshift(restored);
+      archive = archive.filter(x=>x.id!==t.id);
+      save(); render(); renderArchive();
+    };
+    acts.appendChild(restBtn);
+  }
+
+  li.appendChild(chk);
+  li.appendChild(body);
+  li.appendChild(acts);
+  return li;
+}
+
+/* ---- MAIN RENDER ---- */
+function render(){
+  renderStats();
+
+  let filtered = [...tasks];
+  if(curFilter==='active')    filtered = filtered.filter(t=>!t.completed);
+  if(curFilter==='completed') filtered = filtered.filter(t=>t.completed);
+  if(selCourse)               filtered = filtered.filter(t=>t.course===selCourse);
+
+  // sort: active first by priority (high>med>low), then overdue at top
+  const priOrder = {high:0,med:1,low:2,undefined:2,null:2};
+  const active = filtered.filter(t=>!t.completed).sort((a,b)=>{
+    const aOverdue = a.due && new Date(a.due)<new Date() ? -1:0;
+    const bOverdue = b.due && new Date(b.due)<new Date() ? -1:0;
+    if(aOverdue!==bOverdue) return aOverdue-bOverdue;
+    return (priOrder[a.priority]||2) - (priOrder[b.priority]||2);
+  });
+  const completed = filtered.filter(t=>t.completed)
+    .sort((a,b)=>(b.completedAt||0)-(a.completedAt||0));
+
+  const mainEl = document.getElementById('mainList');
+  const compEl = document.getElementById('completedSection');
+  mainEl.innerHTML=''; compEl.innerHTML='';
+
+  // active section
+  const aLabel = document.createElement('div');
+  aLabel.className='section-label';
+  aLabel.innerHTML = `Active <span>${active.length}</span>`;
+  mainEl.appendChild(aLabel);
+  if(active.length===0){
+    const empty = document.createElement('div');
+    empty.className='empty-msg'; empty.textContent='Nothing active — add a task above';
+    mainEl.appendChild(empty);
+  } else {
+    active.forEach(t=>mainEl.appendChild(buildTask(t,false)));
+  }
+
+  // completed section
+  if(curFilter!=='active' && completed.length>0){
+    const cLabel = document.createElement('div');
+    cLabel.className='section-label';
+    cLabel.innerHTML = `Completed <span>${completed.length}</span>`;
+    compEl.appendChild(cLabel);
+    completed.forEach(t=>compEl.appendChild(buildTask(t,false)));
+  }
+}
+
+/* ---- ARCHIVE ---- */
+function renderArchive(){
+  const sec = document.getElementById('archiveSection');
+  if(!archiveVisible){ sec.style.display='none'; return; }
+  sec.style.display='block'; sec.innerHTML='';
+  if(archive.length===0){
+    const e=document.createElement('div');e.className='empty-msg';e.textContent='Archive is empty';sec.appendChild(e);return;
+  }
+  const label=document.createElement('div');label.className='section-label';
+  label.innerHTML=`Archive <span>${archive.length}</span>`;sec.appendChild(label);
+  archive.forEach(t=>sec.appendChild(buildTask(t,true)));
+}
+
+document.getElementById('archiveToggle').onclick=()=>{
+  archiveVisible=!archiveVisible;
+  document.getElementById('archiveToggle').textContent=archiveVisible?'Hide archive':'Show archive';
+  renderArchive();
+};
+
+function cleanArchive(){
+  archive=archive.filter(t=>t.archivedAt && Date.now()-t.archivedAt < 86400000);
+  localStorage.setItem('hwt_archive',JSON.stringify(archive));
+}
+
+/* ---- ADD TASK ---- */
+function addTask(){
+  const text = document.getElementById('taskInput').value.trim();
+  if(!text) return;
+  tasks.unshift({
+    id: Date.now(),
+    text,
+    completed: false,
+    completedAt: null,
+    due: document.getElementById('dueInput').value || null,
+    course: document.getElementById('courseSelect').value || '',
+    priority: addPri
+  });
+  document.getElementById('taskInput').value='';
+  document.getElementById('dueInput').value='';
+  document.getElementById('courseSelect').value='';
+  // reset priority UI
+  addPri='low';
+  addCard.querySelectorAll('[data-pri]').forEach(b=>b.className=b.className.replace(/\bsel-\w+/g,''));
+  addCard.querySelector('[data-pri="low"]').classList.add('sel-low');
+  save(); render();
+}
+document.getElementById('addBtn').onclick=addTask;
+document.getElementById('taskInput').addEventListener('keydown',e=>e.key==='Enter'&&addTask());
+
+/* ---- FILTERS ---- */
+document.querySelectorAll('.filt-btn').forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll('.filt-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    curFilter=btn.dataset.filter;
+    render();
+  };
+});
+
+/* ---- MODAL ---- */
+function openModal(id){
+  editingId=id;
+  const t=tasks.find(x=>x.id===id);
+  document.getElementById('editText').value=t.text;
+  document.getElementById('editDue').value=t.due||'';
+  renderCourseDropdowns();
+  document.getElementById('editCourse').value=t.course||'';
+  editPri=t.priority||'low';
+  document.querySelectorAll('[data-mpri]').forEach(b=>{
+    b.className=b.className.replace(/\bsel-\w+/g,'');
+    if(b.dataset.mpri===editPri) b.classList.add(priClass(editPri));
+  });
+  document.getElementById('modal').classList.add('open');
+}
+
+const modalEl = document.getElementById('modal');
+setupPriGroup(document.querySelector('.pri-modal-group'), ()=>editPri, v=>{ editPri=v; });
+document.getElementById('modalSave').onclick=()=>{
+  const t=tasks.find(x=>x.id==editingId);
+  if(t){
+    const v=document.getElementById('editText').value.trim();
+    if(v) t.text=v;
+    t.due=document.getElementById('editDue').value||null;
+    t.course=document.getElementById('editCourse').value||'';
+    t.priority=editPri;
+  }
+  modalEl.classList.remove('open');
+  save(); render();
+};
+document.getElementById('modalCancel').onclick=()=>modalEl.classList.remove('open');
+modalEl.onclick=e=>{ if(e.target===modalEl) modalEl.classList.remove('open'); };
+
+/* ---- LIVE COUNTDOWN ---- */
+setInterval(()=>{
+  document.querySelectorAll('[data-due]').forEach(el=>{
+    el.textContent=countdown(el.dataset.due);
+  });
+  // re-render every 30s to refresh stats + sort
+}, 1000);
+setInterval(()=>{ render(); renderStats(); }, 30000);
+
+/* ---- INIT ---- */
+cleanArchive();
+setInterval(cleanArchive, 3600000);
+renderCourseDropdowns();
+renderCoursesBar();
+render();
+</script>
 </body>
 </html>
